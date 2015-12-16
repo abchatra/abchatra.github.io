@@ -3,7 +3,6 @@ layout: post
 title: Tagged Float
 ---
 
-###Introduction
 [Tagged pointer] (https://en.wikipedia.org/wiki/Tagged_pointer) is a well know concept which every VM tries to expolit. Unlink other VM we don't tag a pointer. Instead we tag the non-pointer a.k.a a float or an int. For the purpose of this blog I will illustrate the implementation of tagged float in 64 bit. Chakra doesn't tag float in 32 bit, but tags the integer. On 64 bit Chakra tags both float and and integer. First let us see why we need tagged floats.
 
 ###Object representation
