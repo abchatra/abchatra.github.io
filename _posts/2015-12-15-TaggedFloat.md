@@ -3,38 +3,39 @@ layout: post
 title: Tagged Float
 ---
 
-[Tagged pointer] (https://en.wikipedia.org/wiki/Tagged_pointer) is a well know concept which every VM tries to expolit. Unlink other VM we don't tag a pointer. Instead we tag the non-pointer a.k.a a float or an int. For the purpose of this blog I will illustrate the implementation of tagged float in 64 bit. Chakra doesn't tag float in 32 bit, but tags the integer. On 64 bit Chakra tags both float and and integer. First let us see why we need tagged floats.
+[Tagged pointer] (https://en.wikipedia.org/wiki/Tagged_pointer) is a well know concept which every virtual machine (VM) tries to expolit. Unlink some other VM's Chakra doesn't tag a pointer. Instead Chakra tag's the non-pointer a.k.a a float or an int. For the purpose of this blog I will illustrate the implementation of tagged float in 64 bit. Chakra doesn't tag float in 32 bit, but tags the integer. On 64 bit Chakra tags both float and an integer. First let us see why we need tagged floats.
 
 ###Object representation
-Javascript is a Garbage Collected language. Any object is represented as a Var which ia always a pointer.
+Javascript is a Garbage Collected (GC) language. Any object is accessed as a Var which ia always a pointer.
 
 ```C++
 typedef void * Var;
 ``` 
 
-Var typically points to a [RecyclableObject](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Types/RecyclableObject.h#L191). In short RecyclableObject is an object structure which holds an information about the object. It is at the root of object hierarcy which all other ojects inherit. This necessiates a vitual pointer which consumes 8 bytes for each object. It holds an additional pointer called type which is another 8 bytes. Type pointer disambiguites between various kinds of RecyclableObjects such as Strings, numbers, dynamic objects etc. 
+Var typically points to a [RecyclableObject](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Types/RecyclableObject.h#L191). In short RecyclableObject is an object structure which holds an information about the object. It is at the root of object hierarcy which all other ojects inherit. This necessiates a vTable pointer which consumes 8 bytes for each object. It holds an additional pointer to type which accounts for another 8 bytes. Type structure disambiguites between various kinds of RecyclableObjects such as Strings, numbers, dynamic objects etc and can be shared between multiple objects.  
 
 ```c++
 +	__vfptr*	
 +   type*  
 ```
 
-So in nutshell 16 bytes are required to represent a simple object (again in x64).  Now lets take an example: 
+In nutshell 16 bytes are required to represent a simple object (again in x64).  Now lets take an example: 
 
 ```js
 var velocity = 10.4;
 ```
 
-To represent a variable `velocity` which holds an integer we need to create an object called [JavascriptNumber](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Library/JavascriptNumber.h) which inherits from RecyclableObject and can store a double 10.4. Total bytes required is 24 (`sizeof(Js::JavascriptNumber) == sizeof(Js::RecyclableObject) + sizeof(double)`. Turns out our recycle allocates at 16 byte boundary. 24 bytes is rounded off to 32 bytes. We need 32 bytes to represent JavascriptNumber. In addition to this 8 bytes Var ponter is necessary in the runtime to point this object. Here comes the saviour. 
+To represent a variable `velocity` which holds an integer we need to create an object called [JavascriptNumber](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Library/JavascriptNumber.h) which inherits from RecyclableObject and can store a double value (10.4). Total bytes required is 24 (`sizeof(Js::JavascriptNumber) == sizeof(Js::RecyclableObject) + sizeof(double)`. Turns out our GC allocates at 16 byte boundary. 24 bytes is rounded off to 32 bytes. We need 32 bytes to represent JavascriptNumber. In addition to this 8 bytes Var ponter is necessary in the runtime to point this object. 
+Can we do better?
 
 ###Extra bits in a pointer
 Lets look at memory address allocated by the GC carefully.
 Couple of characteristics of pointers:
 
- 1. Bottom 4 bits are always going to be zero. (Remember our recycler allocates at 16 byte boundary)
+ 1. Bottom 4 bits are always going to be zero. (Remember our GC allocates at 16 byte boundary)
  2. Top 16 bits are going to zero as Operating system only uses bottom 48 bits to represent virtual memory (256TB is good enough).
  
-We can party with these extra bits. How exactly GC ignores this is for another post. Assumption is if you tag any of these bits and use it for any other purpose GC doesn't care. It ignores entire value of that pointer.  
+We can party with these extra bits. How exactly GC ignores this is for another post. Assumption is if you tag any of these bits and use it for any other purpose GC doesn't care. It ignores entire value of that pointer. For tagged float Chakra uses top 14 bits out of 16.
 
 ###IEEE 754 floating point representation
 Now lets look at the 64-bit double IEEE 754-2008 format specified by [ECMA262](http://tc39.github.io/ecma262/#sec-ecmascript-language-types-number-type).
