@@ -41,9 +41,9 @@ We can party with these extra bits. How exactly GC ignores this is for another p
 Now lets look at the 64-bit double IEEE 754-2008 format specified by [ECMA262](http://tc39.github.io/ecma262/#sec-ecmascript-language-types-number-type).
 A floating point variable is represented as following.
 
-|Sign   |	Exponent  |	Fraction  |
-|-------|:---------:|----------:|
-|	1 [63]|	11 [62–52]|	52 [51–00]|
+|Sign|Exponent|Fraction|
+|----|:------:|-------:|
+|1 [63]|11 [62–52]|52 [51–00]|
 
 See [this] (http://steve.hollasch.net/cgindex/coding/ieeefloat.html) blog for more infomration on floating point format.
 NaN's are represented by a bit pattern with an exponent of all 1's and a non-zero fraction. If the fraction is all zero it can be either +Infinity or -Infinity depending on sign bit. This lets tons of ways of expressing NaN. Ecma262 specifications says all the NaN's are treated equal. So we just need one. We cannoncalize all the NaN's to just the one shown below which is infact a QNaN. 
