@@ -1,10 +1,10 @@
 ---
 layout: page
-title: About
+title: Hello
 permalink: /about/
 ---
 
-I am dev in Chakra team which builds super fast Javascript compiler for Edge and node.js.
+I am developer in Chakra team. I am super interested in learning everything and anything to do with javascript, compilers and dynamic languages.
 
 ### Contact me
 
