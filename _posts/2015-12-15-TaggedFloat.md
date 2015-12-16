@@ -62,6 +62,7 @@ NaN's are represented by a bit pattern with an exponent of all 1's and a non-zer
 ```C++
 static const UINT64 k_Nan = 0xFFF8000000000000ull;
 static const
+static const
 ```
 
 
