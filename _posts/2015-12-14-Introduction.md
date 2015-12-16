@@ -3,8 +3,8 @@ layout: page
 title: Introduction
 ---
 
-I joined Chakra team back in 2009. I have learnt a bit about Chakra engine in the process.
-I am in no way expert yet.  I am still figuring out details and if I have incorrectly 
+I joined Chakra team back in 2009. I have hacked a bunch of things in Chakra engine.
+I am in no way expert.  I am still figuring out details and if I have incorrectly 
 articulated something do let me know.
 
 Following will be the series of articles which will touch basic building blocks of the 
