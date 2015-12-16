@@ -3,10 +3,10 @@ layout: page
 title: Introduction
 ---
 
-I started as developer in Chakra team back in 2009. I have worked in various part of the engine and know a bit here and there. 
-I am still learning and if I have incorrectly articulated something do let me know. 
+I joined Chakra team back in 2009. I have learnt a bit about Chakra engine in the process. I am in no way expert yet.  
+I am still figuring out details and if I have incorrectly articulated something do let me know. 
 
-Following will be the series of blogs which will touch basic building blocks of the Chakra engine. 
+Following will be the series of articles which will touch basic building blocks of the Chakra engine. 
 
-1. [Tagged float] (2015-12-15-TaggedFloat.md)
+1. [Tagged float] (http://abchatra.github.io/TaggedFloat)
 
