@@ -32,9 +32,21 @@ To represent a variable `velocity` which holds an integer we need to create an o
 Lets look at memory address allocated by the GC carefully.
 Couple of characteristics of pointers:
 
- 1. Bottom 4 bits are always going to be zero. (Remembe our recycler allocates at 16 byte boundary)
+ 1. Bottom 4 bits are always going to be zero. (Remember our recycler allocates at 16 byte boundary)
  2. Top 16 bits are going to zero as Operating system only uses bottom 48 bits to represent virtual memory (256TB is good enough).
  
 We can party with these extra bits. How exactly GC ignores this is for another post. Assumption is if you tag any of these bits and use it for any other purpose GC doesn't care. It ignores entire value of that pointer.  
 
-Now lets look at the
+Now lets look at the 64-bit double IEEE 754-2008 format specified by [ECMA262](http://tc39.github.io/ecma262/#sec-ecmascript-language-types-number-type)
+
+A floating point variable is represented as following.
+
+|Sign|	Exponent|	Fraction|
+|------------- |:-------------:| -----:|
+|	1 [63]|	11 [62–52]|	52 [51–00]|
+
+See [this] (http://steve.hollasch.net/cgindex/coding/ieeefloat.html) blog for more infomration on floating point format
+
+```C++
+static const UINT64 k_Nan = 0xFFF8000000000000ull;
+```
