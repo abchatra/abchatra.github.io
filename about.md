@@ -4,12 +4,8 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
-
-### More Information
-
-A place to include any other types of information that you'd like to include about yourself.
+I am dev in Chakra team which builds super fast Javascript compiler for Edge and node.js.
 
 ### Contact me
 
-[email@domain.com](mailto:email@domain.com)
+[abchatra@microsoft.com](mailto:abchatra@microsoft.com)
