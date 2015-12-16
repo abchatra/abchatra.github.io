@@ -42,6 +42,7 @@ Now lets look at the 64-bit double IEEE 754-2008 format specified by [ECMA262](h
 A floating point variable is represented as following.
 
 <table>
+  <tbody>
   <tr> 
     <td>Sign</td>
     <td>Exponent</td>
@@ -52,6 +53,7 @@ A floating point variable is represented as following.
     <td>[62–52]</td>
     <td>52 [51–00]</td>
   </tr>
+  </tbody>
 </table>
 
 See [this] (http://steve.hollasch.net/cgindex/coding/ieeefloat.html) blog for more infomration on floating point format.
