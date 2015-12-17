@@ -15,7 +15,7 @@ typedef void * Var;
 Var typically points to a [RecyclableObject](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Types/RecyclableObject.h#L191). In short RecyclableObject is an object structure which holds an information about the object. It is at the root of object hierarchy which all other objects inherit. This necessitates a vTable pointer which consumes 8 bytes for each object. It holds an additional pointer to _type_ which accounts for another 8 bytes. [Type](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Types/Type.h#L22) structure disambiguate between various kinds of RecyclableObjects such as strings, numbers, dynamic objects etc and can be shared between multiple objects.  
 
 ```c++
-+    __vfptr*    
++   __vfptr*    
 +   type*  
 ```
 
