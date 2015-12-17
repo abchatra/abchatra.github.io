@@ -59,7 +59,7 @@ static const uint64 k_NegInf = 0xFFF0000000000000ull;
 ```
 
 ###Tagging scheme
-From the above IEEE 754 floating representation we know that all double values (except NaN, +Infinity, -Infinity) are guaranteed to have at least one of the exponent bits **not set**. So we xor all the doubles with **0xFFFC<<48** and store them in the memory. This magic xor constant guarantees that all the doubles will have at least one bit in the top 14 bits are set. This magic constant also ensures that NaN & others have 50th-bit set and it can't look like a pointer. Engine ensures that every double has, at least, one of the top 16 bits set when a double is stored in memory. 
+From the above IEEE 754 floating representation we know that all double values (except NaN, +Infinity, -Infinity) are guaranteed to have at least one of the exponent bits **not set**. So we xor all the doubles with **0xFFFC<<48** and store them in the memory. This magic xor constant guarantees that all the doubles will have at least one bit in the top 14 bits are set. This magic constant also ensures that NaN & others have 50th-bit set and it can't look like a pointer. Engine ensures that every double has, at least, one of the top 14 bits set when a double is stored in memory. 
 
 A simple table to illustrate.
 
@@ -76,7 +76,7 @@ Note: Chakra keeps RecyclableObject pointer values as is.
 
 See links for [floating point conversion](http://babbage.cs.qc.edu/courses/cs341/IEEE-754.html) calculator & [xor](http://xor.pw/) calculator.
 
-GC simply looks at top 16 bits (>>48). If any of top 14 bit is set, it is a double. It untags the double by again xoring with **0XFFC<<48** and extracts the double. Total memory spent on double in the VM is just 8 bytes as we directly store the double value instead of storing a pointer to any other data structure.
+GC simply looks at top 16 bits (>>48). If any of top 14 bit is set, it is a double. Otherwise it is a valid pointer to a RecyclableObject. If untags the double by again xoring with **0XFFC<<48**. Total memory spent on double in the VM is just 8 bytes as we directly store the double value instead of storing a pointer to any other data structure.
 
 Hope this helps. Please let me know the feedback either through email or leaving a comment here. 
 
