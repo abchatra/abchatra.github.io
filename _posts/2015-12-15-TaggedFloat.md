@@ -14,7 +14,7 @@ typedef void * Var;
 
 Var typically points to a [RecyclableObject](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Types/RecyclableObject.h#L191). RecyclableObject is root of the object hierarchy which all other objects inherit. This necessitates a vTable pointer which consumes 8 bytes for each object. It holds an additional pointer to [Type](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Types/Type.h#L22) which accounts for another 8 bytes. Type structure disambiguates between various kinds of RecyclableObjects such as strings, numbers, dynamic objects etc and can be shared between multiple objects. Every RecyclableObject has following two fields:
 
-```c++
+```C++
 __vfptr*   // 8 bytes
 type*      // 8 bytes
 ```
@@ -25,8 +25,7 @@ In a nutshell 16 bytes are required to represent a simple object (again in x64).
 var speed = 10.4;
 ```
 
-To represent this Var in engine, Chakra need to create an object named [JavascriptNumber](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Library/JavascriptNumber.h) which inherits from RecyclableObject and can store a double value (10.4). Total bytes required is 24 (`sizeof(Js::JavascriptNumber) == sizeof(Js::RecyclableObject) + sizeof(double))`. Turns out our GC allocates at 16 byte boundary. 24 bytes is rounded off to 32 bytes. We need 32 bytes to represent a JavascriptNumber. In addition, to this 8 byte Var pointer is necessary for the runtime to point to this object. How can we avoid all these overhead? 
-Can we avoid this overhead for every var pointing to a double?
+To represent this Var in engine, Chakra need to create an object named [JavascriptNumber](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Library/JavascriptNumber.h) which inherits from RecyclableObject and can store a double value (10.4). Total bytes required is 24 (`sizeof(Js::JavascriptNumber) == sizeof(Js::RecyclableObject) + sizeof(double))`. Turns out our GC allocates at 16 byte boundary. 24 bytes is rounded off to 32 bytes. We need 32 bytes to represent a JavascriptNumber. In addition, to this 8 byte Var pointer is necessary for the runtime to point to this object. Can we avoid this overhead for every var pointing to a double? Tagged pointer is to use extra bits in a pointer to represent additional metadata about the content of the pointer. If we could stash a double in pointer and mark it as non-pointer, GC and all other runtime can recognize it and we save on bytes.
 
 ###Extra bits in a pointer
 Let us look at memory address allocated by the GC carefully.
