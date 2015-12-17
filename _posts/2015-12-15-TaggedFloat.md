@@ -64,6 +64,7 @@ A simple table to illustrate.
 
 |Double value or pointer|Bit pattern in hex|Bit pattern after xor|
 |---:|:---:|:---:|
+|0.0|0000000000000000|fffc000000000000|
 |0.4|c02599999999999a|3fd999999999999a|
 |Infinity|7ff0000000000000|800c000000000000|
 |-Infinity|fff0000000000000|000c000000000000|
@@ -76,5 +77,5 @@ See links for [floating point conversion](http://babbage.cs.qc.edu/courses/cs341
 
 GC simply looks at top 16 bits (>>48). If any bit is set it it is a double. It untags the double by again xoring with **0XFFC<<48** and extracts the double. Total memory spent on double in the VM is just 8 bytes as we directly store the double value instead of storing a pointer to any other data structure.
 
-Hope this helps.
+Hope this helps. Please let me know the feedback either through email or leaving a comment here. 
 
