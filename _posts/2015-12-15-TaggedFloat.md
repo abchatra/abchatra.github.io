@@ -62,12 +62,15 @@ From the above IEEE 754 floating representation we know that all double values (
 
 A simple table to illustrate.
 
-|Double value or pointer|0.4|Infinity|-Infinity|NaN|Var|
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-|Bit pattern in hex|c02599999999999a|7ff0000000000000|fff0000000000000|fff8000000000000|00000209512b4e20|
-|Bit pattern after xor|c02599999999999a|800c000000000000|000c000000000000|0004000000000000|00000209512b4e20|
+|Double value or pointer|Bit pattern in hex|Bit pattern after xor|
+|---:|:---:|:---:|
+|0.4|c02599999999999a|3fd999999999999a|
+|Infinity|7ff0000000000000|800c000000000000|
+|-Infinity|fff0000000000000|000c000000000000|
+|NaN|fff8000000000000|0004000000000000|
+|RecyclableObject*|00000209512b4e20|00000209512b4e20|
 
-Note: Chakra keeps pointer values as is. 
+Note: Chakra keeps RecyclableObject pointer values as is. 
 
 See links for [floating point conversion](http://babbage.cs.qc.edu/courses/cs341/IEEE-754.html) calculator & [xor](http://xor.pw/) calculator.
 
