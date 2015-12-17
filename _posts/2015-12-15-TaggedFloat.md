@@ -44,20 +44,6 @@ A floating point variable is represented as following.
 |Sign|Exponent|Fraction|
 |----|:------:|-------:|
 |1 [63]|11 [62-52]|52 [51-00]|
-<table>
-  <tbody>
-  <tr> 
-    <td>Sign</td>
-    <td>Exponent</td>
-    <td>Fraction</td>
-  </tr>
-  <tr> 
-    <td>1 [63]</td>
-    <td>11 [62–52]</td>
-    <td>52 [51–00]</td>
-  </tr>
-  </tbody>
-</table>
 
 See [this] (http://steve.hollasch.net/cgindex/coding/ieeefloat.html) blog for more infomration on floating point format.
 NaN's are represented by a bit pattern with an exponent of all 1's and a non-zero fraction. If the fraction is all zero it can be either +Infinity or -Infinity depending on sign bit. This lets tons of ways of expressing NaN. Ecma262 specifications says all the NaN's are treated equal. So we just need one. We cannoncalize all the NaN's to just the one shown below which is infact a QNaN. 
