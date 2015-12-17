@@ -41,6 +41,9 @@ We can party with these extra bits. How exactly GC ignores this is for another p
 Now lets look at the 64-bit double IEEE 754-2008 format specified by [ECMA262](http://tc39.github.io/ecma262/#sec-ecmascript-language-types-number-type).
 A floating point variable is represented as following.
 
+|Sign|Exponent|Fraction|
+|----|:------:|-------:|
+|1 [63]|11 [62-52]|52 [51-00]|
 <table>
   <tbody>
   <tr> 
@@ -50,7 +53,7 @@ A floating point variable is represented as following.
   </tr>
   <tr> 
     <td>1 [63]</td>
-    <td>[62–52]</td>
+    <td>11 [62–52]</td>
     <td>52 [51–00]</td>
   </tr>
   </tbody>
