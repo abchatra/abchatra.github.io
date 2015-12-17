@@ -25,7 +25,7 @@ In a nutshell 16 bytes are required to represent a simple object (again in x64).
 var velocity = 10.4;
 ```
 
-To represent a variable `velocity` which holds a double we need to create an object called [JavascriptNumber](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Library/JavascriptNumber.h) which inherits from RecyclableObject and can store a double value (10.4). Total bytes required is 24 (`sizeof(Js::JavascriptNumber) == sizeof(Js::RecyclableObject) + sizeof(double))`. Turns out our GC allocates at 16 byte boundary. 24 bytes is rounded off to 32 bytes. We need 32 bytes to represent JavascriptNumber. In addition, to this 8 byte Var pointer is necessary for the runtime to point this object. Can we do better?
+To represent a variable `velocity` which holds a double we need to create an object called [JavascriptNumber](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Library/JavascriptNumber.h) which inherits from RecyclableObject and can store a double value (10.4). Total bytes required is 24 (`sizeof(Js::JavascriptNumber) == sizeof(Js::RecyclableObject) + sizeof(double))`. Turns out our GC allocates at 16 byte boundary. 24 bytes is rounded off to 32 bytes. We need 32 bytes to represent JavascriptNumber. In addition, to this 8 byte Var pointer is necessary for the runtime to point to this object. Can we avoid this overhead for every var pointing to a double?
 
 ###Extra bits in a pointer
 Let us look at memory address allocated by the GC carefully.
