@@ -74,7 +74,7 @@ Note: Chakra keeps RecyclableObject pointer values as is.
 
 See links for [floating point conversion](http://babbage.cs.qc.edu/courses/cs341/IEEE-754.html) calculator & [xor](http://xor.pw/) calculator.
 
-GC simply looks at top 16 bits (>>48). If any bit is set it it is a double. It untags the double by xoring with **0XFFC<<48** again and extracts the double. Total memory spent on double in the VM is just 8 bytes as we directly store the double value instead of storing a pointer to any other data structure.
+GC simply looks at top 16 bits (>>48). If any bit is set it it is a double. It untags the double by again xoring with **0XFFC<<48** and extracts the double. Total memory spent on double in the VM is just 8 bytes as we directly store the double value instead of storing a pointer to any other data structure.
 
 Hope this helps.
 
