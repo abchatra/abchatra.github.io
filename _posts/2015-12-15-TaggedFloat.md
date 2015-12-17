@@ -34,7 +34,7 @@ Couple of characteristics of pointers:
  1. Bottom 4 bits are always going to be zero. (Remember our GC allocates at 16 byte boundary)
  2. Top 16 bits are going to zero as the operating system only uses bottom 48 bits to represent virtual memory (256TB is good enough).
  
-We can party with these extra bits. How exactly GC ignores this is for another post. The assumption is if you tag any of these bits and use it for any other purpose GC doesn't care. It ignores the entire value of that pointer. For tagged float Chakra uses top 14 bits out of 16.
+We can party with these extra bits. The assumption is if you tag any of these bits and use it for any other purpose GC doesn't care. It ignores the entire value of that pointer. For tagged float Chakra uses top 14 bits out of 16.
 
 ###IEEE 754 floating point representation
 Now let us look at the 64-bit double IEEE 754-2008 format specified by [ECMA262](http://tc39.github.io/ecma262/#sec-ecmascript-language-types-number-type).
@@ -45,6 +45,7 @@ A floating point variable is represented as following.
 |1 [63]|11 [62-52]|52 [51-00]|
 
 See [this] (http://steve.hollasch.net/cgindex/coding/ieeefloat.html) blog for more information on floating-point format. The interesting part is the exponent. If all the 11 bits in the exponent are 1 it can represent 3 values
+
 1. Positive infinity.
 2. Negative infinity.
 3. NaN
@@ -75,7 +76,7 @@ Note: Chakra keeps RecyclableObject pointer values as is.
 
 See links for [floating point conversion](http://babbage.cs.qc.edu/courses/cs341/IEEE-754.html) calculator & [xor](http://xor.pw/) calculator.
 
-GC simply looks at top 16 bits (>>48). If any bit is set it it is a double. It untags the double by again xoring with **0XFFC<<48** and extracts the double. Total memory spent on double in the VM is just 8 bytes as we directly store the double value instead of storing a pointer to any other data structure.
+GC simply looks at top 16 bits (>>48). If any of top 14 bit is set, it is a double. It untags the double by again xoring with **0XFFC<<48** and extracts the double. Total memory spent on double in the VM is just 8 bytes as we directly store the double value instead of storing a pointer to any other data structure.
 
 Hope this helps. Please let me know the feedback either through email or leaving a comment here. 
 
