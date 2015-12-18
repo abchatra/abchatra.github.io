@@ -25,7 +25,7 @@ In a nutshell, 16 bytes are required to represent a simple object (again in x64)
 var speed = 10.4;
 ```
 
-To represent this Var in the engine, Chakra need to create an object named [JavascriptNumber](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Library/JavascriptNumber.h) which inherits from RecyclableObject and can store a float value (10.4). Total bytes required is 24 (`sizeof(Js::JavascriptNumber) == sizeof(Js::RecyclableObject) + sizeof(double))`. Turns out our GC allocates at 16 byte boundary. 24 bytes is rounded off to 32 bytes. We need 32 bytes to represent a JavascriptNumber. In addition, to this 8 byte Var pointer is necessary for the runtime to point to this object. Can we avoid this overhead for every var pointing to a float? If we could encode a float in a pointer and mark it as a non-pointer, the runtime can recognize it and we save on bytes.
+To represent this Var in the engine, Chakra need to create an object named [JavascriptNumber](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Library/JavascriptNumber.h) which inherits from RecyclableObject and can store a float value (10.4). Total bytes required is 24 (`sizeof(Js::JavascriptNumber) == sizeof(Js::RecyclableObject) + sizeof(double))`. Turns out our GC allocates at 16 byte boundary. 24 bytes is rounded off to 32 bytes. Chakra needs 32 bytes to represent a JavascriptNumber. In addition, to this 8 byte Var pointer is necessary for the runtime to point to this object. Can we avoid this overhead for every var pointing to a float? If we could encode a float in a pointer and mark it as a non-pointer, the runtime can recognize it and we save on bytes.
 
 ###Extra bits in a pointer
 Let us look at memory address allocated by the GC carefully.
@@ -49,7 +49,7 @@ See [this] (http://steve.hollasch.net/cgindex/coding/ieeefloat.html) blog for mo
 2. Negative infinity.
 3. NaN
 
-NaN's are represented by a bit pattern with an exponent of all 1's and a non-zero fraction. If the fraction is all zero it can be either +Infinity or -Infinity depending on sign bit. This lets tons of ways of expressing NaN. Ecma262 specifies that all NaN's are treated equally. So we just need one. We canonicalize all the NaN's to just the one shown below which is, in fact, a [QNaN](https://en.wikipedia.org/wiki/NaN). 
+NaN's are represented by a bit pattern with an exponent of all 1's and a non-zero fraction. If the fraction is all zero it can be either +Infinity or -Infinity depending on sign bit. This lets tons of ways of expressing NaN. Ecma262 specifies that all NaN's are treated equally. So we just need one. Chakra canonicalize's all the NaN's to just the one shown below which is, in fact, a [QNaN](https://en.wikipedia.org/wiki/NaN). 
 
 ```C++
 static const uint64 k_Nan    = 0xFFF8000000000000ull;
@@ -82,6 +82,6 @@ Note: Chakra keeps RecyclableObject pointer values as is.
 
 See links for [floating point conversion](http://babbage.cs.qc.edu/courses/cs341/IEEE-754.html) calculator.
 
-Runtime simply looks at top 16 bits (`x >> 48 != 0`). If any of top 16 bit is set, it is a float. Or else it is a valid pointer to a RecyclableObject. If it is a float, runtime gets the original double by xoring with **0xFFFC<<48** (`x ===  (x^(0xFFFC<<48)^(0xFFFC<<48)`). Total memory spent on a float in the VM is just 8 bytes as we directly store the float value inside a pointer.
+Runtime simply looks at top 16 bits (`x >> 48 != 0`). If any of top 16 bit is set, it is a float. Or else it is a valid pointer to a RecyclableObject. If it is a float, runtime gets the original double by xoring with **0xFFFC<<48** (`x ===  (x^(0xFFFC<<48)^(0xFFFC<<48)`). Total memory spent on a float in the VM is just 8 bytes as Chakra directly stores the float inside a pointer.
 
 To close this post Chakra does bit twiddling magic to save 32 bytes of memory for each var pointing to a float. Hope this helps. Please let me know the feedback either through email or leaving a comment here. 
