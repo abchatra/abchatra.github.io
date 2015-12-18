@@ -82,6 +82,6 @@ Note: Chakra keeps RecyclableObject pointer values as is.
 
 See links for [floating point conversion](http://babbage.cs.qc.edu/courses/cs341/IEEE-754.html) calculator.
 
-Runtime simply looks at top 16 bits (`x >> 48 != 0`). If any of top 16 bit is set, it is a float. Or else it is a valid pointer to a RecyclableObject. If it is a float, runtime gets the original double by xoring with **0xFFFC<<48** (`x ===  (x^(0xFFFC<<48)^(0xFFFC<<48)`). Total memory spent on a float in the VM is just 8 bytes as Chakra directly stores the float inside a pointer.
+Runtime simply looks at top 16 bits (`x >> 48 != 0`). If any of top 16 bit is set, it is a float or else it is a valid pointer to a RecyclableObject. If it is a float, runtime gets the original float by xoring with **0xFFFC<<48** (`x ===  (x^(0xFFFC<<48)^(0xFFFC<<48)`). Total memory spent on a float in the VM is just 8 bytes as Chakra directly stores the float inside a pointer.
 
 To close this post Chakra does bit twiddling magic to save 32 bytes of memory for each var pointing to a float. Hope this helps. Please let me know the feedback either through email or leaving a comment here. 
