@@ -3,23 +3,23 @@ layout: post
 title: Tagged Float
 ---
 
-A [tagged pointer] (https://en.wikipedia.org/wiki/Tagged_pointer) is a well know concept which every virtual machine (VM) tries to exploit. Unlike some other VM's Chakra doesn't tag a pointer. Instead, Chakra tag's the non-pointer a.k.a a float or an int. For the purpose of this blog, I will illustrate the implementation of tagged float in 64 bit. (Float means double-precision 64-bit format IEEE 754-2008 as specified by [ECMA262](http://tc39.github.io/ecma262/#sec-ecmascript-language-types-number-type)). Chakra doesn't tag floats in 32 bit but tags integers. On 64 bit Chakra tags both floats and integers. First let us see our object representation, it's size and the need for tagged floats.
+A [tagged pointer] (https://en.wikipedia.org/wiki/Tagged_pointer) is a well know concept which every virtual machine (VM) tries to exploit. Unlike some other VM's Chakra doesn't tag a pointer. Instead, Chakra tag's the non-pointer a.k.a a float or an int. For the purpose of this blog, I will illustrate the implementation of tagged float in 64 bit. In the context of this blog float means double-precision 64-bit format IEEE 754-2008 as specified by [ECMA262](http://tc39.github.io/ecma262/#sec-ecmascript-language-types-number-type)). Chakra doesn't tag floats in 32 bit but tags integers. On 64 bit Chakra tags both floats and integers. First let us see our object representation, it's size and the need for tagged floats.
 
 ###Object representation
-Javascript is a Garbage Collected (GC) language. Any object or primitive (which represents javascript var) is accessed as a void pointer (`void *`) named Var in the context of Chakra runtime.
+Javascript is a Garbage Collected (GC) language. Any object or primitive (which represents javascript var) is accessed as a void pointer named Var in Chakra runtime.
 
 ```C++
 typedef void * Var;
 ``` 
 
-Var typically points to a [RecyclableObject](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Types/RecyclableObject.h#L191). RecyclableObject is the root of the object hierarchy which all other objects inherit. This necessitates a vTable pointer which consumes 8 bytes for each object. It holds an additional pointer to [Type](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Types/Type.h#L22) which accounts for another 8 bytes. Type structure disambiguates between various kinds of RecyclableObjects such as strings, numbers, dynamic objects etc and can be shared between multiple objects. Every RecyclableObject has following two fields:
+Var typically points to a [RecyclableObject](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Types/RecyclableObject.h#L191). RecyclableObject is the root of the object hierarchy which all other objects inherit. This necessitates a vTable pointer which consumes 8 bytes for each object. It holds an additional pointer to [Type](https://github.com/Microsoft/ChakraCore/blob/master/lib/Runtime/Types/Type.h#L22) which accounts for another 8 bytes. Type structure disambiguates between various kinds of RecyclableObjects such as strings, numbers, dynamic objects  and can be shared between multiple objects. Every RecyclableObject has following two fields:
 
 ```C++
 __vfptr*   // 8 bytes
 type*      // 8 bytes
 ```
 
-In a nutshell, 16 bytes are required to represent a simple object (again in x64).  Now let us take an example. Following `speed` variable holds a float. 
+In a nutshell, 16 bytes are required to represent a simple object (again in x64).  Now let us take an example. Following `speed` javascript variable holds a float. 
 
 ```js
 var speed = 10.4;
@@ -34,17 +34,16 @@ Couple of characteristics of pointers:
  1. Bottom 4 bits are always going to be zero. (Remember our GC allocates at 16 byte boundary)
  2. Top 16 bits are going to zero as the operating system only uses bottom 48 bits to represent virtual memory address (256TB is good enough).
  
-We can party with these extra bits. One can use these always zero bits to encode a float. But how will runtime differentiate between a valid pointer or a float encoded in a pointer? Can we encode the entire float value which 64 bit inside a pointer which also 64 bits and don't lose precision? First it is important to understand the floating point representation. 
+We can party with these extra bits. One can use these always zero bits to encode a float. But how will the runtime differentiate between a valid pointer or a float encoded in a pointer? Can we encode the entire float which is 64 bit inside a pointer which is also 64 bit and don't lose precision? First it is important to understand the floating point representation. 
 
 ###IEEE 754 floating point representation
-Now let us look at the 64-bit double precision IEEE 754-2008 format specified by [ECMA262](http://tc39.github.io/ecma262/#sec-ecmascript-language-types-number-type).
-A floating point variable is represented as following.
+Now let us look at the 64-bit double precision floating point value: 
 
 |Sign|Exponent|Fraction|
 |----|:------:|-------:|
 |1 [63]|11 [62-52]|52 [51-00]|
 
-See [this] (http://steve.hollasch.net/cgindex/coding/ieeefloat.html) blog for more information on floating-point format. The interesting part is the exponent. If all the 11 bits in the exponent are 1 it can represent 3 values
+See [this] (http://steve.hollasch.net/cgindex/coding/ieeefloat.html) blog for more information on floating-point format. The interesting part is the exponent. If all the 11 bits in the exponent are 1 it can represent 3 values:
 
 1. Positive infinity.
 2. Negative infinity.
@@ -61,9 +60,9 @@ static const uint64 k_NegInf = 0xFFF0000000000000ull;
 Now let us dig deeper into our tagging scheme.
 
 ###Tagging scheme
-Remember our goal here is to tag a pointer our goal here is
+Remember our goal here is to pick a tagging scheme in a pointer so as to:
 
-1. Differentiate between a pointer and a float.
+1. Easily differentiate between a pointer and a float.
 2. Not lose any data while encoding a float.
 
 From the above IEEE 754 floating representation we know that all float values (except NaN, +Infinity, -Infinity) are guaranteed to have at least one of the exponent bits **not set**. So we xor all floats with **0xFFFC0000 00000000 00000000 00000000 or 0xFFFC<<48** and store them in the memory as pointers. This magic xor constant guarantees that all floats will have at least one bit set in the exponent part (bits 62-52). This magic constant also ensures that NaN, Infinity & -Infinity have 50th-bit set. To generalize all floats will have one of the top 16 bit set. Pointers won't have any of the top 16 bit set. 
@@ -81,8 +80,8 @@ A simple table to illustrate.
 
 Note: Chakra keeps RecyclableObject pointer values as is. 
 
-See links for [floating point conversion](http://babbage.cs.qc.edu/courses/cs341/IEEE-754.html) calculator & [xor](http://xor.pw/) calculator.
+See links for [floating point conversion](http://babbage.cs.qc.edu/courses/cs341/IEEE-754.html) calculator.
 
-Runtime simply looks at top 16 bits (x >> 48 != 0). If any of top 16 bit is set, it is a float. Or else it is a valid pointer to a RecyclableObject. If it is a float, runtime get original double by xoring with **0xFFFC<<48** (`x == (x^0xFFFC<<48^0xFFFC<<48`). Total memory spent on a float in the VM is just 8 bytes as we directly store the float value instead of storing a pointer to any other data structure.
+Runtime simply looks at top 16 bits (`x >> 48 != 0`). If any of top 16 bit is set, it is a float. Or else it is a valid pointer to a RecyclableObject. If it is a float, runtime gets the original double by xoring with **0xFFFC<<48** (`x ===  (x^(0xFFFC<<48)^(0xFFFC<<48)`). Total memory spent on a float in the VM is just 8 bytes as we directly store the float value inside a pointer.
 
 To close this post Chakra does bit twiddling magic to save 32 bytes of memory for each var pointing to a float. Hope this helps. Please let me know the feedback either through email or leaving a comment here. 
