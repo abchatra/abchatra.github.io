@@ -15,5 +15,6 @@ Following is the list of articles. I will populate the list as I have more conte
 If you are particularly interested in a topic do let me know. 
 
 * [Tagged float] (http://abchatra.github.io/TaggedFloat)
+* [Type] (http://abchatra.github.io/Type)
 
 Thank you!
