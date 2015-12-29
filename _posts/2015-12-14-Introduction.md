@@ -7,7 +7,7 @@ I joined Chakra team back in 2009. I have hacked a bunch of code in Chakra engin
 Eventhough I have spent a great deal of time in this codebase, I still have lot to learn. 
 (I am not an expert in any sense).
 
-Intention of this blog is to help new developers to make sense of basic building blocks. 
+Intention of this blog is to help new developers to make sense of basic building blocks in Chakra. 
 Over the course I intend to cover all parts of the engine such as type system, jit, 
 runtime etc. If you see any inaccuracy in my blog please point out.  
 
