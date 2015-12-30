@@ -4,7 +4,7 @@ title: Tagged Float
 ---
 
 A [tagged pointer] (https://en.wikipedia.org/wiki/Tagged_pointer) is a well know concept which every virtual machine (VM) tries to exploit. Unlike some other VM's Chakra doesn't tag a pointer. Instead, Chakra tag's the non-pointer a.k.a a float or an int. For the purpose of this blog, I will illustrate the implementation of tagged float in 64 bit. In the context of this blog float means double-precision 64-bit format IEEE 754-2008 as specified by [ECMA262](http://tc39.github.io/ecma262/#sec-ecmascript-language-types-number-type). Chakra doesn't tag floats in 32 bit but tags integers. On 64 bit Chakra tags both floats and integers. First let us see our object representation, it's size and the need for tagged floats.
-
+<!--more-->
 ###Object representation
 Javascript is a Garbage Collected (GC) language. Any object or primitive (which represents javascript var) is accessed as a void pointer named Var in Chakra runtime.
 
