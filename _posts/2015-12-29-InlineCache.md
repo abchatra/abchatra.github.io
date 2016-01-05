@@ -10,8 +10,9 @@ Note, in this context of blog call site means any property access location (line
 
 <!--more-->  
 
-###Cost of property lookup
+**Blog in progress...**
 
+###Cost of property lookup
 
 Let us take an example:
 
