@@ -43,8 +43,7 @@ print(GetModel(mymachine));
 When the *model* property is accessed in script following steps are taken. (Read about [type](http://abchatra.github.io/Type) here)
 
 1.  Fetch the type (machine->type) of the object. 
-2.  Property map ((machine->type->typeHandler) is invoked to get the slot number corresponding to property *model*. For example model is at slot 1.
-3.  Fetch the property at that slot machine->slots[1]
+2.  Invoke dictionary lookup in property map ((machine->type->typeHandler) to get the slot number corresponding to property *model*. Lets say property model is at slot 1;machine->slots[1]
 
 Step 2 is super expensive for runtimes. 
 
