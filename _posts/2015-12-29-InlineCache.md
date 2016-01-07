@@ -38,7 +38,7 @@ function SewingMachine(brand, model) {
 var myMachine = new SewingMachine("Brother", "CS6000i");
 ```
 
-How does the access of 
+When the acess myCar.model
 
 
 Let us dump the bytecode using debug version of ch.exe. Ch.exe is a lightweight console host for hosting ChakraCore. See *using ChakraCore* section [here](https://github.com/microsoft/chakracore) for how to build ch.exe . 
@@ -49,11 +49,10 @@ ch.exe test.js -dump:bytecode
 
 Function GetModel ( (#1.2), #3) (In0, In1) (size: 11 [10])
       5 locals (1 temps from R4), 2 inline cache
-...
   Line  12: return myCar.model;
   Col    6: ^
     0012   ProfiledLdFld        R0 = R3.model #0 <0>
     0016   Br                   x:0021 (   8)
-...
+
 ```
 *ProfiledLdFld*
