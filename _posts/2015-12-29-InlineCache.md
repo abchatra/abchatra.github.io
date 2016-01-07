@@ -22,27 +22,36 @@ function Car(make, model) {
 
 var mycar = new Car("Honda", "Accord");
 
-function GetModel(myCar)
+function GetModel(machine)
 {
-  return myCar.model;
+  return machine.model;
 }
+print(GetModel(mycar));
 ```
 
-Function *GetModel* returns *model* property from myCar object. Typically myCar object is instance of Car. Though it is possible GetModel be called from a different type of object such as SewingMachine and still the code is valid. 
+Function *GetModel* returns *model* property from *machine* object. Typically *machine* is instance of *Car*. Though *GetModel* can be invoked from a different type of object such as *SewingMachine* and still the contract of code is valid. Sewing machines also have model property. 
 
 ```js
 function SewingMachine(brand, model) {
   this.brand = brand;
   this.model = model;
 }
-var myMachine = new SewingMachine("Brother", "CS6000i");
+var mymachine = new SewingMachine("Brother", "CS6000i");
+print(GetModel(mymachine));
 ```
 
-When the acess myCar.model
+When the *model* property is accessed in script following steps are taken. (Read about [type](http://abchatra.github.io/Type) here)
+
+1.  Fetch the type (machine->type) of the object. 
+2.  Property map ((machine->type->typeHandler) is invoked to get the slot number corresponding to property *model*. For example model is at slot 1.
+3.  Fetch the property at that slot machine->slots[1]
+
+Step 2 is super expensive for runtimes. 
 
 
-Let us dump the bytecode using debug version of ch.exe. Ch.exe is a lightweight console host for hosting ChakraCore. See *using ChakraCore* section [here](https://github.com/microsoft/chakracore) for how to build ch.exe . 
+###Dumping bytecode
 
+Let us dump the bytecode using debug version of ch.exe to see inline caches. Ch.exe is a lightweight console host for hosting ChakraCore. See *using ChakraCore* section [here](https://github.com/microsoft/chakracore) for how to build ch.exe . 
 
 ```
 ch.exe test.js -dump:bytecode
@@ -55,4 +64,4 @@ Function GetModel ( (#1.2), #3) (In0, In1) (size: 11 [10])
     0016   Br                   x:0021 (   8)
 
 ```
-*ProfiledLdFld*
+
