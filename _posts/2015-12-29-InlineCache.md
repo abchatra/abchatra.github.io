@@ -44,7 +44,7 @@ When the acess myCar.model
 Let us dump the bytecode using debug version of ch.exe. Ch.exe is a lightweight console host for hosting ChakraCore. See *using ChakraCore* section [here](https://github.com/microsoft/chakracore) for how to build ch.exe . 
 
 
-```cmd
+```
 ch.exe test.js -dump:bytecode
 
 Function GetModel ( (#1.2), #3) (In0, In1) (size: 11 [10])
