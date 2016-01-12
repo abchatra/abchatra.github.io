@@ -4,7 +4,10 @@ layout: default
 
 <div class="posts">
   {% for post in site.posts %}
-  {% if post.visible!= 0  %}
+  {% if post.tags contains 'draft' %}
+  <!-- This is a draft. Allow blog to be displayed in draft blog lists. Use in blog page layout to display a warning that the page is a draft. -->
+  {% else %} 
+    <!-- This is not a draft. Allow post to be displayed in blog lists-->   
     <article class="post">
 
       <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
@@ -15,5 +18,6 @@ layout: default
 
       <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">Read More</a>
     </article>
+  {% endif %}
   {% endfor %}
 </div>
