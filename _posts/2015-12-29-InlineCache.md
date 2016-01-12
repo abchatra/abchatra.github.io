@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Inline Cache
-draft: true
+invisible: true
 ---
 In this post, we are going to understand the inline cache with respect to Chakra. We will briefly look at the need for inline cache as well. If you haven't heard of inline cache at all, this [wiki](https://en.wikipedia.org/wiki/Inline_caching) page and the [type](http://abchatra.github.com/Type) blog are necessary to read before we deep dive. To quote from wiki:
 *The concept of inline caching is based on the empirical observation that the objects that occur at a particular call site are often of the same type. In those cases, performance can be increased greatly by storing the result of a method lookup "inline", i.e. directly at the call site.*
