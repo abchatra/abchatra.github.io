@@ -67,7 +67,7 @@ Remember our goal here is to pick a tagging scheme in a pointer so as to:
 1. Easily differentiate between a pointer and a float.
 2. Not lose any data while encoding a float.
 
-From the above IEEE 754 floating representation we know that all float values (except NaN, +Infinity, -Infinity) are guaranteed to have at least one of the exponent bits **not set**. So we xor all floats with **0xFFFC0000 00000000 00000000 00000000 or 0xFFFC<<48** and store them in the memory as pointers. This magic xor constant guarantees that all floats will have at least one bit set in the exponent part (bits 62-52). This magic constant also ensures that NaN, Infinity & -Infinity have 50th-bit set. To generalize all floats will have one of the top 16 bit set. Pointers won't have any of the top 16 bit set. 
+From the above IEEE 754 floating representation we know that all float values (except NaN, +Infinity, -Infinity) are guaranteed to have at least one of the exponent bits **not set**. So we xor all floats with **0xFFFC0000 00000000 or 0xFFFC<<48** and store them in the memory as pointers. This magic xor constant guarantees that all floats will have at least one bit set in the exponent part (bits 62-52). This magic constant also ensures that NaN, Infinity & -Infinity have 50th-bit set. To generalize all floats will have one of the top 16 bit set. Pointers won't have any of the top 16 bit set. 
 
 A simple table to illustrate.
 
